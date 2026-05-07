@@ -92,7 +92,7 @@ fun DemoFlow(onExit: () -> Unit) {
                 )
                 is Screen.C -> ScreenC(
                     item = current.item,
-                    onClose = { backStack = listOf(Screen.A) }
+                    onClose = onExit,
                 )
             }
         }
