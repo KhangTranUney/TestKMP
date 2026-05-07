@@ -16,9 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -78,6 +80,11 @@ private fun LoginScreen(onBack: () -> Unit, onLogin: () -> Unit) {
             Spacer(modifier = Modifier.height(32.dp))
             Button(onClick = onLogin) {
                 Text("Login")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            val uriHandler = LocalUriHandler.current
+            OutlinedButton(onClick = { uriHandler.openUri("https://www.google.com") }) {
+                Text("Open Browser")
             }
         }
     }
