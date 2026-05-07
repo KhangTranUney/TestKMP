@@ -33,7 +33,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import kotlinx.serialization.Serializable
 
 data class Item(
     val id: Int,
@@ -48,18 +47,6 @@ private val demoItems = (1..20).map {
         description = "This is the detailed description for item $it."
     )
 }
-
-@Serializable
-object DemoRoute
-
-@Serializable
-private object DemoScreenARoute
-
-@Serializable
-private object DemoScreenBRoute
-
-@Serializable
-private data class DemoScreenCRoute(val itemId: Int)
 
 fun NavGraphBuilder.demoFlow(navController: NavController) {
     navigation<DemoRoute>(startDestination = DemoScreenARoute) {

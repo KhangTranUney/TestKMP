@@ -16,10 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.serialization.Serializable
-
-@Serializable
-object MainRoute
 
 @Composable
 fun App() {
