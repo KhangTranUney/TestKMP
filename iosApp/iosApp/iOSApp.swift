@@ -2,16 +2,16 @@ import SwiftUI
 
 @main
 struct iOSApp: App {
-    @State private var showDemoView = false
+    @State private var showLoginView = false
 
     var body: some Scene {
         WindowGroup {
             SplashScreen(onFinished: {
-                showDemoView = true
+                showLoginView = true
             })
-            .fullScreenCover(isPresented: $showDemoView) {
-                DemoView(onExit: {
-                    showDemoView = false
+            .fullScreenCover(isPresented: $showLoginView) {
+                LoginView(onExit: {
+                    showLoginView = false
                 })
             }
         }
