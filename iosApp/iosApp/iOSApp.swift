@@ -13,7 +13,7 @@ struct iOSApp: App {
                     }
                 })
             } else {
-                ContentView()
+                DemoView()
             }
         }
     }

@@ -4,18 +4,15 @@ import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController()
+        DemoViewControllerKt.DemoViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
-struct ContentView: View {
+struct DemoView: View {
     var body: some View {
         ComposeView()
             .ignoresSafeArea()
     }
 }
-
-
-
