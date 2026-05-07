@@ -10,7 +10,9 @@ struct iOSApp: App {
                 showDemoView = true
             })
             .fullScreenCover(isPresented: $showDemoView) {
-                DemoView()
+                DemoView(onExit: {
+                    showDemoView = false
+                })
             }
         }
     }

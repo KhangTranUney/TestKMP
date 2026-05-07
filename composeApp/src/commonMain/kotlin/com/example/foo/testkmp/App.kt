@@ -6,12 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun App() {
+fun App(onExit: () -> Unit = {}) {
     MaterialTheme {
         val navController = rememberNavController()
 
         NavHost(navController = navController, startDestination = LoginRoute) {
-            loginFlow(navController)
+            loginFlow(navController, onExit = onExit)
         }
     }
 }

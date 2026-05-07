@@ -25,11 +25,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 
-fun NavGraphBuilder.loginFlow(navController: NavController) {
+fun NavGraphBuilder.loginFlow(navController: NavController, onExit: () -> Unit) {
     navigation<LoginRoute>(startDestination = LoginScreenRoute) {
         composable<LoginScreenRoute> {
             LoginScreen(
-                onBack = { navController.popBackStack() },
+                onBack = onExit,
                 onLogin = { navController.navigate(OtpScreenRoute) },
             )
         }
