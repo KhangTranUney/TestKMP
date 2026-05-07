@@ -2,17 +2,14 @@ import SwiftUI
 
 @main
 struct iOSApp: App {
-    @State private var showSplash = true
+    @State private var showDemoView = false
 
     var body: some Scene {
         WindowGroup {
-            if showSplash {
-                SplashScreen(onFinished: {
-                    withAnimation {
-                        showSplash = false
-                    }
-                })
-            } else {
+            SplashScreen(onFinished: {
+                showDemoView = true
+            })
+            .fullScreenCover(isPresented: $showDemoView) {
                 DemoView()
             }
         }
