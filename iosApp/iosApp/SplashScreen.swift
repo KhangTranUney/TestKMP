@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct SplashScreen: View {
     @State private var countdown = 3
@@ -12,19 +11,12 @@ struct SplashScreen: View {
         VStack(spacing: 24) {
             Spacer()
 
-            if let uiImage = UIImage(named: "AppIcon") {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
-            } else {
-                Image(systemName: "app.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .foregroundStyle(.blue)
-            }
+            Text("TestKMP")
+                .font(.system(size: 36, weight: .bold, design: .rounded))
+
+            Text("A Kotlin Multiplatform demo app")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
 
             if finished {
                 Button(action: onStart) {
