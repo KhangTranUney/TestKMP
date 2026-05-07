@@ -4,6 +4,7 @@ import UIKit
 struct SplashScreen: View {
     @State private var countdown = 3
     @State private var timer: Timer?
+    @State private var finished = false
 
     let onFinished: () -> Void
 
@@ -23,6 +24,13 @@ struct SplashScreen: View {
                     .scaledToFit()
                     .frame(width: 120, height: 120)
                     .foregroundStyle(.blue)
+            }
+
+            if !finished {
+                Text("\(countdown)")
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
             }
 
             Spacer()
@@ -47,6 +55,9 @@ struct SplashScreen: View {
             } else {
                 t.invalidate()
                 timer = nil
+                withAnimation {
+                    finished = true
+                }
                 onFinished()
             }
         }
