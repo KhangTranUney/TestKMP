@@ -3,6 +3,7 @@ import UIKit
 
 struct SplashScreen: View {
     @State private var countdown = 3
+    @State private var timer: Timer?
 
     let onFinished: () -> Void
 
@@ -36,16 +37,21 @@ struct SplashScreen: View {
         .onAppear {
             startCountdown()
         }
+        .onDisappear {
+            timer?.invalidate()
+            timer = nil
+        }
     }
 
     private func startCountdown() {
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { t in
             if countdown > 1 {
                 withAnimation {
                     countdown -= 1
                 }
             } else {
-                timer.invalidate()
+                t.invalidate()
+                timer = nil
                 onFinished()
             }
         }
