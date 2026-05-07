@@ -42,7 +42,7 @@ fun NavGraphBuilder.loginFlow(navController: NavController, onExit: () -> Unit) 
         composable<ResultScreenRoute> {
             ResultScreen(
                 onBack = { navController.popBackStack() },
-                onFinish = { navController.popBackStack<LoginRoute>(inclusive = true) },
+                onClose = onExit,
             )
         }
     }
@@ -120,7 +120,7 @@ private fun OtpScreen(onBack: () -> Unit, onVerify: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ResultScreen(onBack: () -> Unit, onFinish: () -> Unit) {
+private fun ResultScreen(onBack: () -> Unit, onClose: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -146,8 +146,8 @@ private fun ResultScreen(onBack: () -> Unit, onFinish: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = onFinish) {
-                Text("Finish")
+            Button(onClick = onClose) {
+                Text("Close")
             }
         }
     }
