@@ -2,7 +2,6 @@ package com.example.foo.testkmp
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -25,13 +24,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.navigation
+import androidx.navigation.toRoute
+import kotlinx.serialization.Serializable
 
 data class Item(
     val id: Int,
@@ -39,131 +41,149 @@ data class Item(
     val description: String,
 )
 
-private sealed class Screen {
-    data object A : Screen()
-    data object B : Screen()
-    data class C(val item: Item) : Screen()
+private val demoItems = (1..20).map {
+    Item(
+        id = it,
+        title = "Item $it",
+        description = "This is the detailed description for item $it."
+    )
+}
+
+@Serializable
+object DemoRoute
+
+@Serializable
+private object DemoScreenARoute
+
+@Serializable
+private object DemoScreenBRoute
+
+@Serializable
+private data class DemoScreenCRoute(val itemId: Int)
+
+fun NavGraphBuilder.demoFlow(navController: NavController) {
+    navigation<DemoRoute>(startDestination = DemoScreenARoute) {
+        composable<DemoScreenARoute> {
+            DemoScreenA(
+                onBack = { navController.popBackStack() },
+                onStartB = { navController.navigate(DemoScreenBRoute) },
+            )
+        }
+        composable<DemoScreenBRoute> {
+            DemoScreenB(
+                onBack = { navController.popBackStack() },
+                onItemClick = { item -> navController.navigate(DemoScreenCRoute(item.id)) },
+            )
+        }
+        composable<DemoScreenCRoute> { backStackEntry ->
+            val route = backStackEntry.toRoute<DemoScreenCRoute>()
+            val item = remember(route.itemId) { demoItems.first { it.id == route.itemId } }
+            DemoScreenC(
+                item = item,
+                onBack = { navController.popBackStack() },
+                onClose = { navController.popBackStack<MainRoute>(inclusive = false) },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoFlow(onExit: () -> Unit) {
-    var backStack by remember { mutableStateOf(listOf<Screen>(Screen.A)) }
-    val current = backStack.last()
-
+private fun DemoScreenA(onBack: () -> Unit, onStartB: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        when (current) {
-                            is Screen.A -> "Screen A"
-                            is Screen.B -> "Screen B"
-                            is Screen.C -> "Item Details"
-                        }
-                    )
-                },
+                title = { Text("Screen A") },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (backStack.size > 1) {
-                                backStack = backStack.dropLast(1)
-                            } else {
-                                onExit()
-                            }
-                        }
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(padding).fillMaxSize()) {
-            when (current) {
-                is Screen.A -> ScreenA(
-                    onStartB = { backStack = backStack + Screen.B }
-                )
-                is Screen.B -> ScreenB(
-                    onItemClick = { backStack = backStack + Screen.C(it) }
-                )
-                is Screen.C -> ScreenC(
-                    item = current.item,
-                    onClose = onExit,
-                )
+        Column(
+            modifier = Modifier.padding(padding).fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text("Welcome to Screen A", style = MaterialTheme.typography.headlineMedium)
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(onClick = onStartB) {
+                Text("Go to Screen B")
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenA(onStartB: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text("Welcome to Screen A", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = onStartB) {
-            Text("Go to Screen B")
-        }
-    }
-}
-
-@Composable
-private fun ScreenB(onItemClick: (Item) -> Unit) {
-    val items = remember {
-        (1..20).map {
-            Item(
-                id = it,
-                title = "Item $it",
-                description = "This is the detailed description for item $it."
+private fun DemoScreenB(onBack: () -> Unit, onItemClick: (Item) -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Screen B") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
         }
-    }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(items, key = { it.id }) { item ->
-            Card(
-                modifier = Modifier.fillMaxWidth().clickable { onItemClick(item) }
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(item.title, style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(item.description, style = MaterialTheme.typography.bodyMedium)
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.padding(padding).fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items(demoItems, key = { it.id }) { item ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().clickable { onItemClick(item) }
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(item.title, style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(item.description, style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenC(item: Item, onClose: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(item.title, style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(item.description, style = MaterialTheme.typography.bodyLarge)
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = onClose,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
+private fun DemoScreenC(item: Item, onBack: () -> Unit, onClose: () -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Item Details") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
-        ) {
-            Text("Close")
         }
-        Spacer(modifier = Modifier.height(32.dp))
+    ) { padding ->
+        Column(
+            modifier = Modifier.padding(padding).fillMaxSize().padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(item.title, style = MaterialTheme.typography.headlineLarge)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(item.description, style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = onClose,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Close")
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+        }
     }
 }
