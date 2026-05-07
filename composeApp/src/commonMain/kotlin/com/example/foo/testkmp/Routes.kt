@@ -3,16 +3,13 @@ package com.example.foo.testkmp
 import kotlinx.serialization.Serializable
 
 @Serializable
-object MainRoute
+object LoginRoute
 
 @Serializable
-object DemoRoute
+object LoginScreenRoute
 
 @Serializable
-object DemoScreenARoute
+object OtpScreenRoute
 
 @Serializable
-object DemoScreenBRoute
-
-@Serializable
-data class DemoScreenCRoute(val itemId: Int)
+object ResultScreenRoute
