@@ -25,11 +25,6 @@ struct SplashScreen: View {
                     .foregroundStyle(.blue)
             }
 
-            Text("\(countdown)")
-                .font(.system(size: 48, weight: .bold, design: .rounded))
-                .monospacedDigit()
-                .contentTransition(.numericText())
-
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
