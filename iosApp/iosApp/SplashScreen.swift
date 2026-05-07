@@ -6,7 +6,7 @@ struct SplashScreen: View {
     @State private var timer: Timer?
     @State private var finished = false
 
-    let onFinished: () -> Void
+    let onStart: () -> Void
 
     var body: some View {
         VStack(spacing: 24) {
@@ -26,7 +26,19 @@ struct SplashScreen: View {
                     .foregroundStyle(.blue)
             }
 
-            if !finished {
+            if finished {
+                Button(action: onStart) {
+                    Text("Start")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(.horizontal, 48)
+                .transition(.opacity.combined(with: .scale))
+            } else {
                 Text("\(countdown)")
                     .font(.system(size: 48, weight: .bold, design: .rounded))
                     .monospacedDigit()
@@ -58,7 +70,6 @@ struct SplashScreen: View {
                 withAnimation {
                     finished = true
                 }
-                onFinished()
             }
         }
     }

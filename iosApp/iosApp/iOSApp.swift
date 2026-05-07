@@ -6,7 +6,7 @@ struct iOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SplashScreen(onFinished: {
+            SplashScreen(onStart: {
                 showLoginView = true
             })
             .fullScreenCover(isPresented: $showLoginView) {
